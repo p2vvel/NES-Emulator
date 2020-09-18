@@ -1,0 +1,6 @@
+Debug/
+Release/
+*.nes
+*.dll
+NES Emulator/*/
+.vs/
