@@ -396,7 +396,7 @@ void CPU::memory_write(const unsigned short &address, const unsigned char &value
 		first_controller->control_polling(value & 0x01);
 	}
 	else if (address >= 0x8000)
-		return;
+		mapper->control_mapper(value, address);
 	else
 		*memory[address] = value;
 }

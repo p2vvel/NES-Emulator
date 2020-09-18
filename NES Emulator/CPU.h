@@ -637,6 +637,8 @@ unsigned int emulator_debug_cycles;
 
 	controller_base *first_controller;
 	controller_base *second_controller;
+
+	mapper_base* mapper;
 	
 public:
 	CPU();
@@ -680,6 +682,9 @@ public:
 			second_controller = controller;
 	}
 
+
+
+	void connect_mapper(mapper_base* mapper_src) { mapper = mapper_src; }
 	
 
 #ifdef DEBUG_CPU

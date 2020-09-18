@@ -1,9 +1,12 @@
-#include<iostream>
+﻿#include<iostream>
 #include<SFML/Graphics.hpp>
 #include "CPU.h"
 #include "PPU.h"
 #include "mapper_base.h"
 #include "mapper_0.h"
+#include "mapper_1.h"
+#include "mapper_2.h"
+#include "mapper_3.h"
 #include "Screen.h"
 #include "PPU_debug.h"
 #include "controller_base.h"
@@ -20,7 +23,8 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		ROM_path = argv[1];
 	else
-		ROM_path = "Super Mario Bros. (JU) (PRG0) [!].nes";//"donkey_kong.nes";//"allpads.nes";
+		ROM_path = "Castlevania.nes";
+
 
 	sf::RenderWindow win(sf::VideoMode(256 * 2, 240 * 2), "cojoNES");
 	win.setFramerateLimit(60);
@@ -48,13 +52,23 @@ int main(int argc, char* argv[])
 		case 0:
 			mapper = new mapper_0(ROM_path, cpu, ppu);
 			break;
+		case 1:
+			mapper = new mapper_1(ROM_path, cpu, ppu);
+			break;
+		case 2:
+			mapper = new mapper_2(ROM_path, cpu, ppu);
+			break;
+		case 3:
+			mapper = new mapper_3(ROM_path, cpu, ppu);
+			break;
 		default:
 			std::cout << "\nMapper " << mapper_number << " hasn't been implemented yet, or isn't proper NES mapper!";
 			std::cin.get();
 			return -2;
 		}
-		cpu.initializeProgramCounter();	//Ustawia PC zgodnie z odpowiednimi informacjami w PRG-ROM za�adowanymi do RAMu
+		cpu.initializeProgramCounter();	//Ustawia PC zgodnie z odpowiednimi informacjami w PRG-ROM za³adowanymi do RAMu
 	}
+	cpu.connect_mapper(mapper);
 
 
 #ifdef DEBUG_PPU
@@ -79,6 +93,16 @@ int main(int argc, char* argv[])
 				win.close();
 				return 0;
 			}
+#ifdef DEBUG_PPU
+			if (ev.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+				nametable_debug.nametable_console_show(0);
+			else if (ev.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+				nametable_debug.nametable_console_show(1);
+			else if (ev.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+				nametable_debug.nametable_console_show(2);
+			else if (ev.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+				nametable_debug.nametable_console_show(3);
+#endif
 		}
 
 
@@ -91,8 +115,8 @@ int main(int argc, char* argv[])
 			cpu.emulate_cycle();
 
 			if (pad->get_is_polling())
-					pad->update_controller_latch();
-				
+				pad->update_controller_latch();
+
 
 			while ((cpu.get_total_cycles() - 1) * 3 > ppu.get_total_cycles())
 				ppu.update();
@@ -102,13 +126,14 @@ int main(int argc, char* argv[])
 #ifdef DEBUG_PPU
 		//color_debug.update();
 		//pattern_table_debug.update();
-		nametable_debug.update(true);
+		nametable_debug.update(false, true);
 		//oam_debug.update();
 #endif
 
 
-		mapper->control_mapper();
 		screen.display(win);
+		//nametable_debug.nametable_console_show(0);
+		//nametable_debug.nametable_console_show(1);
 		win.display();
 	}
 

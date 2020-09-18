@@ -652,27 +652,41 @@ void PPU::set_mirroring_mode(const nametable_mirroring_mode& mode)
 	{
 		for (int i = 0; i < 0x400; i++)
 		{
-			memory[0x2000 + i] = memory[0x2800 + i];
-			memory[0x2400 + i] = memory[0x2c00 + i];
+			memory[0x2000 + i] = memory[0x2800 + i] = &mem.nametable_0[i];
+			memory[0x2400 + i] = memory[0x2c00 + i] = &mem.nametable_1[i];
 		}
-		std::cout << "\nVERTICAL\n";
 	}
 	else if (mode == nametable_mirroring_mode::horizontal)//Horizontal mirroring: $2000 equals $2400 and $2800 equals
 	{
 		for (int i = 0; i < 0x400; i++)
 		{
-			memory[0x2000 + i] = memory[0x2400 + i];
-			memory[0x2800 + i] = memory[0x2c00 + i];
+			memory[0x2000 + i] = memory[0x2400 + i] = &mem.nametable_0[i];
+			memory[0x2800 + i] = memory[0x2c00 + i] = &mem.nametable_1[i];
 		}
-		std::cout << "\nHORIZONTAL\n";
 	}
-	else if (mode == nametable_mirroring_mode::one_screen)
+	else if (mode == nametable_mirroring_mode::one_screen_low)
 	{
 		for (int i = 0; i < 0x400; i++)
 		{
-			memory[0x2400 + i] = memory[0x2800 + i] = memory[0x2c00 + i] = memory[0x2000 + i];
+			memory[0x2000 + i] = memory[0x2400 + i] = memory[0x2800 + i] = memory[0x2c00 + i] = &mem.nametable_0[i];
 		}
-		std::cout << "\nONE_SCREEN";
+	}
+	else if (mode == nametable_mirroring_mode::one_screen_high)
+	{
+		for (int i = 0; i < 0x400; i++)
+		{
+			memory[0x2000 + i] = memory[0x2400 + i] = memory[0x2800 + i] = memory[0x2c00 + i] = &mem.nametable_1[i];
+		}
+	}
+	else if (mode == nametable_mirroring_mode::four_screen)
+	{
+		for (int i = 0; i < 0x400; i++)
+		{
+			memory[0x2000 + i] = &mem.nametable_0[i];
+			memory[0x2400 + i] = &mem.nametable_1[i];
+			memory[0x2800 + i] = &mem.nametable_2[i];
+			memory[0x2c00 + i] = &mem.nametable_3[i];
+		}
 	}
 	else
 		std::cout << "Unsupported mirroring type!";

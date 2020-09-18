@@ -1,7 +1,7 @@
 #include "CPU.h"
 #include "PPU.h"
 #include "mapper_base.h"
-#include "mapper_0.h"
+
 
 mapper_base::mapper_base(const std::string &path,  CPU &cpu,  PPU &ppu)
 {
@@ -77,11 +77,6 @@ const short mapper_base::verify_header(const std::string &path)
 		std::cout << "\nThe file is too small";
 		return -1;
 	}
-	/*else if (size > 0x8000)
-	{
-		std::cout << "\nNot enough memory to load ROM!";
-		return -1;
-	}//*/
 
 	unsigned char *header = new unsigned char[0xF];
 
@@ -128,6 +123,7 @@ const bool mapper_base::load_ROM(const std::string &path)
 
 	fread(ROM, sizeof ROM[0], ROM_size, file);
 	fclose(file);
+
 
 	std::cout << "Succesfully loaded ROM\nPath: " << path << "\nSize: " << ROM_size << "\nMapper: " 
 		<< ((ROM[0x7] & 0xF0) | ((ROM[0x6] & 0xF0) >> 4))<< "\nPRG-ROM banks: " << (short)PRG_ROM_banks << "\nCHR-ROM banks: " << (short)CHR_ROM_banks

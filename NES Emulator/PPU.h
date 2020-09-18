@@ -196,7 +196,8 @@ struct memory_map_PPU
 };
 
 
-enum nametable_mirroring_mode { horizontal, vertical, one_screen, four_screen};
+enum nametable_mirroring_mode { horizontal, vertical, one_screen_low, one_screen_high, four_screen };
+
 
 class PPU
 {

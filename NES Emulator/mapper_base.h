@@ -27,9 +27,12 @@
 //Size of PRG RAM in 8 KB units (Value 0 infers 8 KB for compatibility; see PRG RAM circuit)
 #define RAM_BANKS ROM[8]
 
+//Zwracaj¹ indeks N-tego PRG albo CHR w ROMie 
+#define GET_PRG_ROM_INDEX(data_index) (16 + (TRAINER ? 512 : 0) + (0x4000 * data_index))
+#define GET_CHR_ROM_INDEX(data_index) (16 + (TRAINER ? 512 : 0) + (0x4000 * PRG_ROM_banks) + (8192 * data_index))
+
 class CPU;
 class PPU;
-class mapper_0;
 
 class mapper_base
 {
@@ -47,7 +50,7 @@ protected:
 public:
 	mapper_base(const std::string &path,  CPU &cpu,  PPU &ppu);
 	~mapper_base();
-	virtual const bool control_mapper() = 0;
+	virtual void control_mapper(const unsigned char& value = 0, const unsigned short &address = 0) = 0;
 	virtual const bool initialize_mapper() = 0;
 	
 	static const short verify_header(const std::string &path);	//Sprawdza poprawnoœc pliku na podstawie pierwszych bajtów nag³ówka, a jeœli jest on poprawny zwraca numer mappera. W przeciwnym wypadku zwraca -1
